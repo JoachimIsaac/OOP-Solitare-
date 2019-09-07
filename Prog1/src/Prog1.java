@@ -9,17 +9,30 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Prog1 {
 
     public static final int DECK_SIZE = 52;
 
     public static void main(String args[])throws IOException {
+        int set_number = 0;
+
 
         System.out.println("Name: Joachim Isaac\nProgram1: Solitaire Stacks\n");
         String copy_of_cards = read_in_cards(getinputFile());
+        ArrayList<RecordStack> card_stack = new ArrayList<>(getnumber_of_cards(copy_of_cards));
         File output_file = getoutFile();
-        System.out.println(copy_of_cards);
+        print_set(output_file,copy_of_cards,set_number);
+        card_stack = set_cards(set_stacks(card_stack),copy_of_cards);
+
+        //Ok all cards are set right about now. Need to do game logic.
+
+        //After game logic , I can print the results.
+        
+
+
+
 
 
     }
@@ -58,8 +71,6 @@ public class Prog1 {
 
             String cards = "";
             String line = "";
-            //Name delimiters something else later.
-            String delims = "[ ]+";
 
             //Looks for a next line and returns a bool value.
             while (infile.hasNextLine()) {
@@ -81,15 +92,46 @@ public class Prog1 {
           return "";
     }
 
-    public static void print_to_outputfile(File output_file_name, String cards){//Here is what you use to print out the set of cards you recieved. <---- work on it next
+    public static void print_set(File output_file_name, String cards, int set_number){//Here is what you use to print out the set of cards you recieved. <---- work on it next
         try {//Output to txt file , will
-//            PrintWriter output = new PrintWriter(output_file_name);
-//            output.println("Hello world");
-//            output.println(42);
-//            output.close();
+            PrintWriter output = new PrintWriter(output_file_name);
+            output.println("Set " + set_number + ":");
+            output.println(cards);
+            System.out.println(cards);
+            output.close();
+
         } catch (IOException ex) {
-//            System.out.println("File not found");
+            System.out.println("File not found");
         }
+    }
+
+    public static int getnumber_of_cards(String cards){
+        //Name delimiters something else later.
+            String delims = "[ ]+";
+//        String array to put the cards into
+// change tokens name --> better naming needed. But it is an array o strings that contains each card in a
+        // index thanks to split.(delims);
+            String[] tokens = cards.split(delims);
+            return tokens.length;
+    }
+
+    public static ArrayList<RecordStack> set_stacks (ArrayList<RecordStack> card_stack){
+        RecordStack stack = new RecordStack();
+        for(int i = 0; i < card_stack.size(); i++) {
+            card_stack.add(stack);
+        }
+        return card_stack;
+    }
+
+
+    public static ArrayList<RecordStack> set_cards(ArrayList<RecordStack> card_stack, String cards){
+        String delims = "[ ]+";
+        String[] tokens = cards.split(delims);
+
+        for(int i = 0; i < tokens.length; i++) {
+            card_stack.get(i).push(tokens[i]);
+        }
+        return card_stack;
     }
 
 
