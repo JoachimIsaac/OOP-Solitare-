@@ -134,6 +134,78 @@ public class Prog1 {
         return card_stack;
     }
 
+    public static ArrayList<RecordStack> play(ArrayList<RecordStack> card_stacks){
+        int card_pointer = 1;
+
+        //go over the logic again but for now it seems almost done !
+        while(card_pointer < card_stacks.size()){
+
+            if(card_pointer >= 3 && check_3_left(card_stacks,card_pointer)){
+                String card_to_move = card_stacks.get(card_pointer).pop();
+                card_stacks.get(card_pointer-3).push(card_to_move);
+                if(card_stacks.get(card_pointer).isEmpty()){
+                    card_stacks.remove(card_pointer);
+                }
+                card_pointer = card_pointer-3;
+
+                //Look for gap
+            }
+            else if(card_pointer >= 1 && !check_1_left(card_stacks,card_pointer) && check_1_left(card_stacks,card_pointer)){
+                String card_to_move = card_stacks.get(card_pointer).pop();
+                card_stacks.get(card_pointer-1).push(card_to_move);
+                if(card_stacks.get(card_pointer).isEmpty()){//Removes the gap if there is any before continuing
+                    card_stacks.remove(card_pointer);
+                }
+                card_pointer = card_pointer-1;///updates card pointer
+            }
+            else if(card_pointer == 0){
+                card_pointer += 1;
+            }
+
+           card_pointer+=1;
+
+        }
+
+        return  card_stacks;
+
+    }
+
+    public static Boolean check_3_left(ArrayList<RecordStack> card_stacks, int card_pointer){
+        if(card_pointer >= 3){
+            String card_to_compare = card_stacks.get(card_pointer-3).peek();
+            String card_started_on = card_stacks.get(card_pointer).peek();
+
+            for(int i =0; i < 2; i++){
+                if(card_to_compare.charAt(i) == card_started_on.charAt(i)){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+
+    }
+
+
+    public static Boolean check_1_left(ArrayList<RecordStack> card_stacks, int card_pointer){
+        if(card_pointer >= 1){
+            String card_to_compare = card_stacks.get(card_pointer-1).peek();
+            String card_started_on = card_stacks.get(card_pointer).peek();
+
+            for(int i =0; i < 2; i++){
+                if(card_to_compare.charAt(i) == card_started_on.charAt(i)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+
+
+
+
 
 }
 
