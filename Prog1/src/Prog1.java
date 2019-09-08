@@ -16,27 +16,24 @@ public class Prog1 {
     public static final int DECK_SIZE = 52;
 
     public static void main(String args[]) throws IOException {
-        int set_number = 1;
-        int number_of_cards = 0;
+
+        for (int i =0; i < 2; i++) {
+            int set_number = 1;
+            int number_of_cards = 0;
 
 
-        System.out.println("Name: Joachim Isaac\nProgram1: Solitaire Stacks\n");
-        String copy_of_cards = read_in_cards(getinputFile());
-        File output_file = getoutFile();
-         number_of_cards = getnumber_of_cards(copy_of_cards);
-        ArrayList<RecordStack> card_stack = new ArrayList<RecordStack>(number_of_cards);
-        print_set(output_file, copy_of_cards, set_number);
-        card_stack = set_cards(set_stacks(card_stack,number_of_cards), copy_of_cards);
+            System.out.println("Name: Joachim Isaac\nProgram1: Solitaire Stacks\n");
+            String copy_of_cards = read_in_cards(getinputFile());
+            File output_file = getoutFile();
+            number_of_cards = getnumber_of_cards(copy_of_cards);
+            ArrayList<RecordStack> card_stack = new ArrayList<RecordStack>(number_of_cards);
 
+            card_stack = set_cards(set_stacks(card_stack, number_of_cards), copy_of_cards);
+            card_stack = play(card_stack);
 
+            print_results(card_stack, output_file, copy_of_cards, set_number);
 
-
-
-
-
-
-//        card_stack = play(card_stack);
-//        print_results(card_stack, output_file);
+        }
 
         // Display what is remaining from the play , i.e results
 
@@ -101,18 +98,6 @@ public class Prog1 {
         return "";
     }
 
-    public static void print_set(File output_file_name, String cards, int set_number) {//Here is what you use to print out the set of cards you recieved. <---- work on it next
-        try {//Output to txt file , will
-            PrintWriter output = new PrintWriter(output_file_name);
-            output.println("Set " + set_number + ":");
-            output.println(cards);
-            System.out.println(cards);
-            output.close();
-
-        } catch (IOException ex) {
-            System.out.println("File not found");
-        }
-    }
 
     public static int getnumber_of_cards(String cards) {
         //Name delimiters something else later.
@@ -126,7 +111,7 @@ public class Prog1 {
         return tokens.length;
     }
 
-    public static ArrayList<RecordStack> set_stacks(ArrayList card_stack,int number_of_cards) {
+    public static ArrayList<RecordStack> set_stacks(ArrayList card_stack, int number_of_cards) {
 
         for (int i = 0; i < number_of_cards; i++) {
             RecordStack stack = new RecordStack();
@@ -162,11 +147,12 @@ public class Prog1 {
                     card_stacks.remove(card_pointer);
                     gap_closed = true;
                 }
-                card_pointer = card_pointer - 3;
+                card_pointer -= 3;
 
                 //Look for gap
             } else if (card_pointer >= 1 && check_1_left(card_stacks, card_pointer)) {
-                String card_to_move = card_stacks.get(card_pointer).pop();
+                if (!(check_3_left(card_stacks, card_pointer)) && check_1_left(card_stacks, card_pointer)){
+                    String card_to_move = card_stacks.get(card_pointer).pop();
                 card_stacks.get(card_pointer - 1).push(card_to_move);
 
                 if (card_stacks.get(card_pointer).isEmpty()) {//Removes the gap if there is any before continuing
@@ -174,10 +160,12 @@ public class Prog1 {
                     gap_closed = true;
                 }
                 card_pointer = card_pointer - 1;///updates card pointer
-            } else if (card_pointer == 0) {
+            }
+            }
+            else if (card_pointer == 0) {
                 card_pointer += 1;
             }
-            if (card_pointer > 0 && gap_closed == false && card_stacks.size() > 2) {
+            if (card_pointer > 0 && gap_closed == false ) {
                 card_pointer += 1;
             }
 
@@ -221,7 +209,7 @@ public class Prog1 {
     }
 
 
-    public static void print_results(ArrayList<RecordStack> card_stacks, File output_file_name) {
+    public static void print_results(ArrayList<RecordStack> card_stacks, File output_file_name, String cards, int set_number) {
         String amount_in_piles = "";
         int number_of_piles = card_stacks.size();
         int current_amount = 0;
@@ -233,6 +221,9 @@ public class Prog1 {
 
         try {//Output to txt file , will
             PrintWriter output = new PrintWriter(output_file_name);
+            output.println("Set " + set_number + ":");
+            output.println(cards);
+            System.out.println(cards);
             output.println(number_of_piles + " Piles remaining:" + amount_in_piles);
             System.out.println(number_of_piles + " Piles remaining:" + amount_in_piles);
             output.close();
@@ -240,9 +231,14 @@ public class Prog1 {
             System.out.println("File not found");
         }
     }
+
+
+
+
+
+
+
+
+
+
 }
-
-
-
-
-
