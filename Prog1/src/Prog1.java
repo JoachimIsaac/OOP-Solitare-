@@ -17,7 +17,7 @@ public class Prog1 {
 
     public static void main(String args[]) throws IOException {
 
-        for (int i =0; i < 2; i++) {
+
             int set_number = 1;
             int number_of_cards = 0;
 
@@ -32,8 +32,8 @@ public class Prog1 {
             card_stack = play(card_stack);
 
             print_results(card_stack, output_file, copy_of_cards, set_number);
+            set_number++;
 
-        }
 
         // Display what is remaining from the play , i.e results
 
@@ -136,12 +136,16 @@ public class Prog1 {
         int card_pointer = 1;
         Boolean gap_closed = false;
 
+
         //go over the logic again but for now it seems almost done !
         while (card_pointer < card_stacks.size()) {
+            System.out.println(check_1_left(card_stacks, card_pointer));
+            System.out.println(card_stacks.get(0).peek().charAt(1));
 
             if (card_pointer >= 3 && check_3_left(card_stacks, card_pointer)) {
                 String card_to_move = card_stacks.get(card_pointer).pop();
                 card_stacks.get(card_pointer - 3).push(card_to_move);
+                //keeping in mind we keep incrementing to get it to a situation where it will fit that scenario
 
                 if (card_stacks.get(card_pointer).isEmpty()) {
                     card_stacks.remove(card_pointer);
@@ -150,37 +154,40 @@ public class Prog1 {
                 card_pointer -= 3;
 
                 //Look for gap
-            } else if (card_pointer >= 1 && check_1_left(card_stacks, card_pointer)) {
-                if (!(check_3_left(card_stacks, card_pointer)) && check_1_left(card_stacks, card_pointer)){
+            }else if (card_pointer >= 1 && check_1_left(card_stacks, card_pointer)) {
+
                     String card_to_move = card_stacks.get(card_pointer).pop();
-                card_stacks.get(card_pointer - 1).push(card_to_move);
+                    card_stacks.get(card_pointer - 1).push(card_to_move) ;
 
                 if (card_stacks.get(card_pointer).isEmpty()) {//Removes the gap if there is any before continuing
                     card_stacks.remove(card_pointer);
                     gap_closed = true;
                 }
-                card_pointer = card_pointer - 1;///updates card pointer
+                card_pointer -= 1;///updates card pointer
             }
-            }
-            else if (card_pointer == 0) {
-                card_pointer += 1;
-            }
+
+
             if (card_pointer > 0 && gap_closed == false ) {
                 card_pointer += 1;
             }
 
+             if (card_pointer == 0) {
+                card_pointer += 1;
+            }
             gap_closed = false;
-
+            for(int i =0; i < card_stacks.size(); i++){
+                System.out.println(card_stacks.get(i).peek() +" cardpointer: "+  card_pointer);
+            }
         }
 
         return card_stacks;
 
     }
 
-    public static Boolean check_3_left(ArrayList<RecordStack> card_stacks, int card_pointer) {
+    public static Boolean check_3_left(ArrayList<RecordStack> card_stacks, int card_pointer) {//logic sound
         if (card_pointer >= 3) {
-            String card_to_compare = card_stacks.get(card_pointer - 3).peek();
-            String card_started_on = card_stacks.get(card_pointer).peek();
+            String card_to_compare = card_stacks.get(card_pointer - 3).peek().trim();
+            String card_started_on = card_stacks.get(card_pointer).peek().trim();
 
             for (int i = 0; i < 2; i++) {
                 if (card_to_compare.charAt(i) == card_started_on.charAt(i)) {
@@ -194,10 +201,10 @@ public class Prog1 {
     }
 
 
-    public static Boolean check_1_left(ArrayList<RecordStack> card_stacks, int card_pointer) {
+    public static Boolean check_1_left(ArrayList<RecordStack> card_stacks, int card_pointer) {//logic is sound
         if (card_pointer >= 1) {
-            String card_to_compare = card_stacks.get(card_pointer - 1).peek();
-            String card_started_on = card_stacks.get(card_pointer).peek();
+            String card_to_compare = card_stacks.get(card_pointer - 1).peek().trim();
+            String card_started_on = card_stacks.get(card_pointer).peek().trim();
 
             for (int i = 0; i < 2; i++) {
                 if (card_to_compare.charAt(i) == card_started_on.charAt(i)) {
