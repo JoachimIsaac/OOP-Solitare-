@@ -15,30 +15,31 @@ public class Prog1 {
 
     public static final int DECK_SIZE = 52;
 
-    public static void main(String args[])throws IOException {
+    public static void main(String args[]) throws IOException {
         int set_number = 0;
 
 
         System.out.println("Name: Joachim Isaac\nProgram1: Solitaire Stacks\n");
         String copy_of_cards = read_in_cards(getinputFile());
-        ArrayList<RecordStack> card_stack = new ArrayList<>(getnumber_of_cards(copy_of_cards));
         File output_file = getoutFile();
-        print_set(output_file,copy_of_cards,set_number);
-        card_stack = set_cards(set_stacks(card_stack),copy_of_cards);
+        ArrayList<RecordStack> card_stack = new ArrayList<>(getnumber_of_cards(copy_of_cards));
+        print_set(output_file, copy_of_cards, set_number);
+//        card_stack = set_cards(set_stacks(card_stack), copy_of_cards);
+        set_stacks(card_stack);
+        System.out.println(card_stack.size());
+//        card_stack = play(card_stack);
+//        print_results(card_stack, output_file);
 
-        //Ok all cards are set right about now. Need to do game logic.
-
-        //After game logic , I can print the results.
-        
+        // Display what is remaining from the play , i.e results
 
 
-
+        //Figure out how ro make it print two sets.
 
 
     }
 
 
-    public static File getinputFile()  {
+    public static File getinputFile() {
 
         //Gets the input file name and stores it in a variable.
         Scanner input = new Scanner(System.in);
@@ -49,7 +50,7 @@ public class Prog1 {
         return input_file;
     }
 
-    public static File getoutFile()  {
+    public static File getoutFile() {
         Scanner input = new Scanner(System.in);
 //      Gets the output file name and stores it in a variable.
         System.out.println("Enter the output file name:");
@@ -77,7 +78,7 @@ public class Prog1 {
                 //Read in a line from the file
                 line = infile.nextLine();
 
-                if (line.charAt(0) != '#') {
+                if (line.charAt(0) != '#') {//
                     cards += "\n" + line;
                 }
 
@@ -89,10 +90,10 @@ public class Prog1 {
         } catch (FileNotFoundException ex) {//Catch to see if file is not found.
             System.out.println("File not found");
         }
-          return "";
+        return "";
     }
 
-    public static void print_set(File output_file_name, String cards, int set_number){//Here is what you use to print out the set of cards you recieved. <---- work on it next
+    public static void print_set(File output_file_name, String cards, int set_number) {//Here is what you use to print out the set of cards you recieved. <---- work on it next
         try {//Output to txt file , will
             PrintWriter output = new PrintWriter(output_file_name);
             output.println("Set " + set_number + ":");
@@ -105,78 +106,91 @@ public class Prog1 {
         }
     }
 
-    public static int getnumber_of_cards(String cards){
+    public static int getnumber_of_cards(String cards) {
         //Name delimiters something else later.
-            String delims = "[ ]+";
+        String delims = "[ ]+";
 //        String array to put the cards into
 // change tokens name --> better naming needed. But it is an array o strings that contains each card in a
         // index thanks to split.(delims);
-            String[] tokens = cards.split(delims);
-            return tokens.length;
+        String[] tokens = cards.split(delims);
+
+        System.out.println("Number in string: " + tokens.length);
+        return tokens.length;
     }
 
-    public static ArrayList<RecordStack> set_stacks (ArrayList<RecordStack> card_stack){
+    public static ArrayList<RecordStack> set_stacks(ArrayList<RecordStack> card_stack) {
         RecordStack stack = new RecordStack();
-        for(int i = 0; i < card_stack.size(); i++) {
+        for (int i = 0; i < card_stack.size(); i++) {
             card_stack.add(stack);
+
         }
+         System.out.println(card_stack.size());
         return card_stack;
     }
 
 
-    public static ArrayList<RecordStack> set_cards(ArrayList<RecordStack> card_stack, String cards){
+    public static ArrayList<RecordStack> set_cards(ArrayList<RecordStack> card_stack, String cards) {
         String delims = "[ ]+";
         String[] tokens = cards.split(delims);
 
-        for(int i = 0; i < tokens.length; i++) {
-            card_stack.get(i).push(tokens[i]);
-        }
+        card_stack.get(1).push(tokens[1]);
+        System.out.println(card_stack.get(1).peek());
+
+//        for (int i = 0; i < tokens.length; i++) {
+//            card_stack.get(i).push(tokens[i]);
+//        }
         return card_stack;
     }
 
-    public static ArrayList<RecordStack> play(ArrayList<RecordStack> card_stacks){
+    public static ArrayList<RecordStack> play(ArrayList<RecordStack> card_stacks) {
         int card_pointer = 1;
+        Boolean gap_closed = false;
 
         //go over the logic again but for now it seems almost done !
-        while(card_pointer < card_stacks.size()){
+        while (card_pointer < card_stacks.size()) {
 
-            if(card_pointer >= 3 && check_3_left(card_stacks,card_pointer)){
+            if (card_pointer >= 3 && check_3_left(card_stacks, card_pointer)) {
                 String card_to_move = card_stacks.get(card_pointer).pop();
-                card_stacks.get(card_pointer-3).push(card_to_move);
-                if(card_stacks.get(card_pointer).isEmpty()){
+                card_stacks.get(card_pointer - 3).push(card_to_move);
+
+                if (card_stacks.get(card_pointer).isEmpty()) {
                     card_stacks.remove(card_pointer);
+                    gap_closed = true;
                 }
-                card_pointer = card_pointer-3;
+                card_pointer = card_pointer - 3;
 
                 //Look for gap
-            }
-            else if(card_pointer >= 1 && !check_1_left(card_stacks,card_pointer) && check_1_left(card_stacks,card_pointer)){
+            } else if (card_pointer >= 1 && check_1_left(card_stacks, card_pointer)) {
                 String card_to_move = card_stacks.get(card_pointer).pop();
-                card_stacks.get(card_pointer-1).push(card_to_move);
-                if(card_stacks.get(card_pointer).isEmpty()){//Removes the gap if there is any before continuing
+                card_stacks.get(card_pointer - 1).push(card_to_move);
+
+                if (card_stacks.get(card_pointer).isEmpty()) {//Removes the gap if there is any before continuing
                     card_stacks.remove(card_pointer);
+                    gap_closed = true;
                 }
-                card_pointer = card_pointer-1;///updates card pointer
+                card_pointer = card_pointer - 1;///updates card pointer
+            } else if (card_pointer == 0) {
+                card_pointer += 1;
             }
-            else if(card_pointer == 0){
+            if (card_pointer > 0 && gap_closed == false && card_stacks.size() > 2) {
                 card_pointer += 1;
             }
 
-           card_pointer+=1;
+            gap_closed = false;
 
         }
 
-        return  card_stacks;
+        return card_stacks;
 
     }
 
-    public static Boolean check_3_left(ArrayList<RecordStack> card_stacks, int card_pointer){
-        if(card_pointer >= 3){
-            String card_to_compare = card_stacks.get(card_pointer-3).peek();
+    public static Boolean check_3_left(ArrayList<RecordStack> card_stacks, int card_pointer) {
+        if (card_pointer >= 3) {
+            String card_to_compare = card_stacks.get(card_pointer - 3).peek();
             String card_started_on = card_stacks.get(card_pointer).peek();
 
-            for(int i =0; i < 2; i++){
-                if(card_to_compare.charAt(i) == card_started_on.charAt(i)){
+            for (int i = 0; i < 2; i++) {
+                if (card_to_compare.charAt(i) == card_started_on.charAt(i)) {
                     return true;
                 }
             }
@@ -187,13 +201,13 @@ public class Prog1 {
     }
 
 
-    public static Boolean check_1_left(ArrayList<RecordStack> card_stacks, int card_pointer){
-        if(card_pointer >= 1){
-            String card_to_compare = card_stacks.get(card_pointer-1).peek();
+    public static Boolean check_1_left(ArrayList<RecordStack> card_stacks, int card_pointer) {
+        if (card_pointer >= 1) {
+            String card_to_compare = card_stacks.get(card_pointer - 1).peek();
             String card_started_on = card_stacks.get(card_pointer).peek();
 
-            for(int i =0; i < 2; i++){
-                if(card_to_compare.charAt(i) == card_started_on.charAt(i)){
+            for (int i = 0; i < 2; i++) {
+                if (card_to_compare.charAt(i) == card_started_on.charAt(i)) {
                     return true;
                 }
             }
@@ -202,11 +216,25 @@ public class Prog1 {
     }
 
 
+    public static void print_results(ArrayList<RecordStack> card_stacks, File output_file_name) {
+        String amount_in_piles = "";
+        int number_of_piles = card_stacks.size();
+        int current_amount = 0;
 
+        for (int i = 0; i < number_of_piles; i++) {
+            current_amount = card_stacks.get(i).number_of_cards();
+            amount_in_piles += " " + Integer.toString(current_amount);
+        }
 
-
-
-
+        try {//Output to txt file , will
+            PrintWriter output = new PrintWriter(output_file_name);
+            output.println(number_of_piles + " Piles remaining:" + amount_in_piles);
+            System.out.println(number_of_piles + " Piles remaining:" + amount_in_piles);
+            output.close();
+        } catch (IOException ex) {
+            System.out.println("File not found");
+        }
+    }
 }
 
 
