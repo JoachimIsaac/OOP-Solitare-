@@ -16,17 +16,25 @@ public class Prog1 {
     public static final int DECK_SIZE = 52;
 
     public static void main(String args[]) throws IOException {
-        int set_number = 0;
+        int set_number = 1;
+        int number_of_cards = 0;
 
 
         System.out.println("Name: Joachim Isaac\nProgram1: Solitaire Stacks\n");
         String copy_of_cards = read_in_cards(getinputFile());
         File output_file = getoutFile();
-        ArrayList<RecordStack> card_stack = new ArrayList<>(getnumber_of_cards(copy_of_cards));
+         number_of_cards = getnumber_of_cards(copy_of_cards);
+        ArrayList<RecordStack> card_stack = new ArrayList<RecordStack>(number_of_cards);
         print_set(output_file, copy_of_cards, set_number);
-//        card_stack = set_cards(set_stacks(card_stack), copy_of_cards);
-        set_stacks(card_stack);
-        System.out.println(card_stack.size());
+        card_stack = set_cards(set_stacks(card_stack,number_of_cards), copy_of_cards);
+
+
+
+
+
+
+
+
 //        card_stack = play(card_stack);
 //        print_results(card_stack, output_file);
 
@@ -118,13 +126,13 @@ public class Prog1 {
         return tokens.length;
     }
 
-    public static ArrayList<RecordStack> set_stacks(ArrayList<RecordStack> card_stack) {
-        RecordStack stack = new RecordStack();
-        for (int i = 0; i < card_stack.size(); i++) {
+    public static ArrayList<RecordStack> set_stacks(ArrayList card_stack,int number_of_cards) {
+
+        for (int i = 0; i < number_of_cards; i++) {
+            RecordStack stack = new RecordStack();
             card_stack.add(stack);
 
         }
-         System.out.println(card_stack.size());
         return card_stack;
     }
 
@@ -133,12 +141,9 @@ public class Prog1 {
         String delims = "[ ]+";
         String[] tokens = cards.split(delims);
 
-        card_stack.get(1).push(tokens[1]);
-        System.out.println(card_stack.get(1).peek());
-
-//        for (int i = 0; i < tokens.length; i++) {
-//            card_stack.get(i).push(tokens[i]);
-//        }
+        for (int i = 0; i < tokens.length; i++) {
+            card_stack.get(i).push(tokens[i]);
+        }
         return card_stack;
     }
 
