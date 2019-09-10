@@ -20,24 +20,42 @@ public class Prog1 {
 
 
             int set_number = 1; //number of games ran essentially
+            int position = 0;
+            int capacity = DECK_SIZE;
             String result="";
 
             System.out.println("Name: Joachim Isaac\nProgram1: Solitaire Stacks\n");
             String copy_of_cards = read_in_cards(getinputFile()); //Reads in the string of cards and puts it into a variable.
             File output_file = getoutFile();
             int games = number_of_games(copy_of_cards);
-            ArrayList<RecordStack> card_stack = new ArrayList<RecordStack>(DECK_SIZE);
-            ArrayList<String>results_list = new ArrayList<>(games);
+            ArrayList<String>tokens = new ArrayList<String>(games * DECK_SIZE);
+            ArrayList<String>results_list = new ArrayList<String>(games);
             System.out.println("This is the number of games we should have -->" + games);
-            card_stack = set_cards(set_stacks(card_stack, DECK_SIZE), copy_of_cards);//Sets the stacks and then sets the cards within the seperate stacks
-            card_stack = play(card_stack);//Game logic to manipulate the stacks and it returns the array of stack that is changed.
-            result = store__results(card_stack,copy_of_cards, set_number,games);//Store the results
-            //Decalre an array of string to store results.
-            results_list.add(result);
-            /// after this loop we print our results with a function. (Function takes in the results_list array).
+            tokens = get_tokens(tokens,copy_of_cards);
+
+            ArrayList<RecordStack> card_stack = new ArrayList<RecordStack>(DECK_SIZE);
+
+
+for (int i =0; i < games; i++) {
+
+    card_stack = set_cards(set_stacks(card_stack, DECK_SIZE), tokens, position,capacity);//Sets the stacks and then sets the cards within the seperate stacks
+    card_stack = play(card_stack);//Game logic to manipulate the stacks and it returns the array of stack that is changed.
+    result = store__results(card_stack, copy_of_cards, set_number, games);//Store the results
+    //Decalre an array of string to store results.
+    results_list.add(result);
+    card_stack = new ArrayList<RecordStack>(DECK_SIZE);
+//
+    position += DECK_SIZE;
+    capacity += DECK_SIZE;
+    set_number += 1;
+}
+
+                /// after this loop we print our results with a function. (Function takes in the results_list array).
+
 
             //////////////Where loop ends/////////
             print_all_results(results_list,games);
+
 
 
 
@@ -109,6 +127,9 @@ public class Prog1 {
 
                     System.out.println(line);
                 }
+                if (line.charAt(0) == '#') {//
+                   break;
+                }
 
                 line = "";
                 //initialized it to and empty string for the next line
@@ -170,18 +191,45 @@ public class Prog1 {
 //    }
 
 
-    public static ArrayList<RecordStack> set_cards(ArrayList<RecordStack> card_stack, String cards) {
-        StringTokenizer cards_to_input = new StringTokenizer(cards);
 
- for (int i = 0; cards_to_input.hasMoreTokens(); i++) {
-            card_stack.get(i).push(cards_to_input.nextToken());
+
+
+//    public static ArrayList<RecordStack> set_cards(ArrayList<RecordStack> card_stack, String cards) {
+//        StringTokenizer cards_to_input = new StringTokenizer(cards);
+//
+// for (int i = 0; cards_to_input.hasMoreTokens(); i++) {
+//            card_stack.get(i).push(cards_to_input.nextToken());
+////        System.out.println(cards_to_input.nextToken());
+//
+//        }
+//
+//
+//        return card_stack;
+//    }
+
+    public static ArrayList<RecordStack> set_cards(ArrayList<RecordStack> card_stack, ArrayList<String> tokens,int position_to_start_at,int capacity) {
+
+
+
+        for (int i = position_to_start_at; i < capacity; i++) {
+                card_stack.get(i-position_to_start_at).push(tokens.get(i));
 //        System.out.println(cards_to_input.nextToken());
+
         }
 
 
         return card_stack;
     }
 
+    public static ArrayList<String> get_tokens(ArrayList<String> token_holder,String cards){
+
+        StringTokenizer cards_to_count = new StringTokenizer(cards);
+        for (int i = 0; cards_to_count.hasMoreTokens(); i++) {
+            token_holder.add(cards_to_count.nextToken());
+
+        }
+        return token_holder;
+    }
 
     public static int number_of_games(String cards){
         StringTokenizer cards_to_count = new StringTokenizer(cards);
