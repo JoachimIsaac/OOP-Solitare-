@@ -14,30 +14,51 @@ import java.util.StringTokenizer;
 
 public class Prog1 {
 
-//    public static final int DECK_SIZE = 52;
+   public static final int DECK_SIZE = 52;
 
     public static void main(String args[]) throws IOException {
 
 
             int set_number = 1; //number of games ran essentially
-            int number_of_cards = 0;
-
+            String result="";
 
             System.out.println("Name: Joachim Isaac\nProgram1: Solitaire Stacks\n");
             String copy_of_cards = read_in_cards(getinputFile()); //Reads in the string of cards and puts it into a variable.
             File output_file = getoutFile();
-            number_of_cards = getnumber_of_cards(copy_of_cards);//Gets the number of cards we have
-            ArrayList<RecordStack> card_stack = new ArrayList<RecordStack>(number_of_cards);
-
-            card_stack = set_cards(set_stacks(card_stack, number_of_cards), copy_of_cards);//Sets the stacks and then sets the cards within the seperate stacks
+            int games = number_of_games(copy_of_cards);
+            ArrayList<RecordStack> card_stack = new ArrayList<RecordStack>(DECK_SIZE);
+            ArrayList<String>results_list = new ArrayList<>(games);
+            System.out.println("This is the number of games we should have -->" + games);
+            card_stack = set_cards(set_stacks(card_stack, DECK_SIZE), copy_of_cards);//Sets the stacks and then sets the cards within the seperate stacks
             card_stack = play(card_stack);//Game logic to manipulate the stacks and it returns the array of stack that is changed.
+            result = store__results(card_stack,copy_of_cards, set_number,games);//Store the results
+            //Decalre an array of string to store results.
+            results_list.add(result);
+            /// after this loop we print our results with a function. (Function takes in the results_list array).
 
-            print_results(card_stack, output_file, copy_of_cards, set_number);//Results from the game are printed
+            //////////////Where loop ends/////////
+            print_all_results(results_list,games);
+
+
+
+            //CLEAN THE ARRAY
+
+
+
+
+//
+//            print_results(card_stack, output_file, copy_of_cards, set_number);//Results from the game are printed
+
+       //1.//Ensure that I have logic to store how many games it has , this is based on the number of cards in my array 52 is one game.
+
+      // 2. //Make a function that stores the results of each game.
+       //3.  //Make a function that cleans the stack so that it can reload.
+
+        /// i want to play the game and store all the results then print it .
             set_number++;
 
 
-       //Look into ensuring that the reading in can work in many different ways(Question: in the instructions you
-        // said it("#") ends on the line so are there cases where it could be in the middle of the array?)
+
 
 
     }
@@ -114,18 +135,18 @@ public class Prog1 {
 //        return tokens.length;
 //    }
 
-    public static int getnumber_of_cards(String cards) { //tokenizer apparently fixed the issue
-        int counter  = 0;
-        StringTokenizer cards_to_count = new StringTokenizer(cards);
-
-        for (int i = 0; cards_to_count.hasMoreTokens(); i++) {
-
-            cards_to_count.nextToken();
-            counter++;
-        }
-
-        return counter;
-    }
+//    public static int getnumber_of_cards(String cards) { //tokenizer apparently fixed the issue
+//        int counter  = 0;
+//        StringTokenizer cards_to_count = new StringTokenizer(cards);
+//
+//        for (int i = 0; cards_to_count.hasMoreTokens(); i++) {
+//
+//            cards_to_count.nextToken();
+//            counter++;
+//        }// don't countthe
+//
+//        return counter;
+//    }
 
     public static ArrayList<RecordStack> set_stacks(ArrayList card_stack, int number_of_cards) {
 
@@ -159,6 +180,18 @@ public class Prog1 {
 
 
         return card_stack;
+    }
+
+
+    public static int number_of_games(String cards){
+        StringTokenizer cards_to_count = new StringTokenizer(cards);
+        int counter = 0;
+
+        for (int i = 0; cards_to_count.hasMoreTokens(); i++) {
+            cards_to_count.nextToken();
+            counter++;
+        }
+        return counter/DECK_SIZE;
     }
 
     public static ArrayList<RecordStack> play(ArrayList<RecordStack> card_stacks) {
@@ -198,16 +231,18 @@ public class Prog1 {
                 }
                 card_pointer -= 1;///updates card pointer
             }
-
-
-            if (card_pointer > 0 && gap_closed == false ) {
-                card_pointer += 1;
+            else{
+                if (card_pointer > 0 && gap_closed == false ){
+               card_pointer += 1;
+                }
             }
 
              if (card_pointer == 0) {
                 card_pointer += 1;
             }
+
             gap_closed = false;
+
             for(int i =0; i < card_stacks.size(); i++){
                 System.out.println(card_stacks.get(i).peek() +" cardpointer: "+  card_pointer);
             }
@@ -249,7 +284,32 @@ public class Prog1 {
     }
 
 
-    public static void print_results(ArrayList<RecordStack> card_stacks, File output_file_name, String cards, int set_number) {
+//    public static void print_results(ArrayList<RecordStack> card_stacks, File output_file_name, String cards, int set_number) {
+//        String amount_in_piles = "";
+//        int number_of_piles = card_stacks.size();
+//        int current_amount = 0;
+//
+//        for (int i = 0; i < number_of_piles; i++) {
+//            current_amount = card_stacks.get(i).number_of_cards();
+//            amount_in_piles += " " + Integer.toString(current_amount);
+//        }
+//
+//        try {//Output to txt file
+//            PrintWriter output = new PrintWriter(output_file_name);
+//            output.println("Set " + set_number + ":");
+//            output.println(cards);
+//            System.out.println(cards);
+//            output.println(number_of_piles + " Piles remaining:" + amount_in_piles);
+//            System.out.println(number_of_piles + " Piles remaining:" + amount_in_piles);
+//            output.close();
+//        } catch (IOException ex) {
+//            System.out.println("File not found");
+//        }
+//    }
+    public static String store__results(ArrayList<RecordStack> card_stacks, String cards, int set_number,int number_of_games) {
+
+        String results= "";
+
         String amount_in_piles = "";
         int number_of_piles = card_stacks.size();
         int current_amount = 0;
@@ -259,20 +319,18 @@ public class Prog1 {
             amount_in_piles += " " + Integer.toString(current_amount);
         }
 
-        try {//Output to txt file
-            PrintWriter output = new PrintWriter(output_file_name);
-            output.println("Set " + set_number + ":");
-            output.println(cards);
-            System.out.println(cards);
-            output.println(number_of_piles + " Piles remaining:" + amount_in_piles);
-            System.out.println(number_of_piles + " Piles remaining:" + amount_in_piles);
-            output.close();
-        } catch (IOException ex) {
-            System.out.println("File not found");
-        }
+        results = "Set " + set_number + ":" + "\n" + cards + "\n" + number_of_piles + " Piles remaining:" + amount_in_piles;
+
+
+       return  results;
     }
+    public static void print_all_results (ArrayList<String> results,int number_of_games) {
 
+        for(int i =0; i < number_of_games; i++){
+            System.out.println(results.get(i) + "\n");
+        }
 
+    }
 
 
 
