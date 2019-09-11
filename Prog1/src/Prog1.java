@@ -18,66 +18,53 @@ public class Prog1 {
 
     public static void main(String args[]) throws IOException {
 
+            int set_number = 1;
 
-            int set_number = 1; //number of games ran essentially
+            //position is used to indicate what position we are when sorting through each deck of cards.
+            //The position in incremented by 52 after a game so that we start at 52 if there is another
+            //deck of cards.
             int position = 0;
+            //capacity effects how much you iterate over the String of card values. It prevents you from reading in more
+            //Than a deck each iteration. It is incremented by 55 each time so that it will start at the start of
+            //The next deck based on the input string.
             int capacity = DECK_SIZE;
-            String result="";
+
+            String result=""; //Stores all the results.
 
             System.out.println("Name: Joachim Isaac\nProgram1: Solitaire Stacks\n");
             String copy_of_cards = read_in_cards(getinputFile()); //Reads in the string of cards and puts it into a variable.
             File output_file = getoutFile();
-            int games = number_of_games(copy_of_cards);
-            ArrayList<String>tokens = new ArrayList<String>(games * DECK_SIZE);
-            ArrayList<String>results_list = new ArrayList<String>(games);
-            System.out.println("This is the number of games we should have -->" + games);
-            tokens = get_tokens(tokens,copy_of_cards);
+            int games = number_of_games(copy_of_cards);//gets the number of games.
+            ArrayList<String>card_tokens = new ArrayList<String>(games * DECK_SIZE);
+            ArrayList<String>results_list = new ArrayList<String>(games);//Stores a string of all the results.
+            card_tokens = get_card_tokens(card_tokens,copy_of_cards);//Puts each individual card into an array and returns that array.
 
             ArrayList<RecordStack> card_stack = new ArrayList<RecordStack>(DECK_SIZE);
 
 
-for (int i =0; i < games; i++) {
+            for (int i =0; i < games; i++) {
+                //Sets the stacks and then sets the cards within the separate stacks
+                card_stack = set_cards(set_stacks(card_stack, DECK_SIZE),card_tokens,position,capacity);
 
-    card_stack = set_cards(set_stacks(card_stack, DECK_SIZE), tokens, position,capacity);//Sets the stacks and then sets the cards within the seperate stacks
-    card_stack = play(card_stack);//Game logic to manipulate the stacks and it returns the array of stack that is changed.
-    result = store__results(card_stack, copy_of_cards, set_number, games);//Store the results
-    //Decalre an array of string to store results.
-    results_list.add(result);
-    card_stack = new ArrayList<RecordStack>(DECK_SIZE);
-//
-    position += DECK_SIZE;
-    capacity += DECK_SIZE;
-    set_number += 1;
-}
+                //Game logic to manipulate the stacks and it returns the array of stack that is changed.
+                card_stack = play(card_stack);
 
-                /// after this loop we print our results with a function. (Function takes in the results_list array).
+                //store_results gets all the results and stores it into a string.
+                result = store_results(card_stack, copy_of_cards, set_number, games);
 
+                //This adds the result per game into an array index.
+                results_list.add(result);
 
-            //////////////Where loop ends/////////
+                //We declare a new ArrayList over the old card stack so that we can add a new set of cards to it.
+                card_stack = new ArrayList<RecordStack>(DECK_SIZE);
+
+                //We increment all of our postion manipulation values. 
+                position += DECK_SIZE;
+                capacity += DECK_SIZE;
+                set_number += 1;
+            }
+
             print_all_results(results_list,games);
-
-
-
-
-            //CLEAN THE ARRAY
-
-
-
-
-//
-//            print_results(card_stack, output_file, copy_of_cards, set_number);//Results from the game are printed
-
-       //1.//Ensure that I have logic to store how many games it has , this is based on the number of cards in my array 52 is one game.
-
-      // 2. //Make a function that stores the results of each game.
-       //3.  //Make a function that cleans the stack so that it can reload.
-
-        /// i want to play the game and store all the results then print it .
-            set_number++;
-
-
-
-
 
     }
 
@@ -221,7 +208,7 @@ for (int i =0; i < games; i++) {
         return card_stack;
     }
 
-    public static ArrayList<String> get_tokens(ArrayList<String> token_holder,String cards){
+    public static ArrayList<String>get_card_tokens(ArrayList<String> token_holder,String cards){
 
         StringTokenizer cards_to_count = new StringTokenizer(cards);
         for (int i = 0; cards_to_count.hasMoreTokens(); i++) {
@@ -354,7 +341,7 @@ for (int i =0; i < games; i++) {
 //            System.out.println("File not found");
 //        }
 //    }
-    public static String store__results(ArrayList<RecordStack> card_stacks, String cards, int set_number,int number_of_games) {
+    public static String store_results(ArrayList<RecordStack> card_stacks, String cards, int set_number,int number_of_games) {
 
         String results= "";
 
@@ -367,15 +354,15 @@ for (int i =0; i < games; i++) {
             amount_in_piles += " " + Integer.toString(current_amount);
         }
 
-        results = "Set " + set_number + ":" + "\n" + cards + "\n" + number_of_piles + " Piles remaining:" + amount_in_piles;
+        results = "Set " + set_number + ":" + "\n" + cards + "\n" +"\n"+ number_of_piles + " Piles remaining:" + amount_in_piles;
 
 
        return  results;
     }
     public static void print_all_results (ArrayList<String> results,int number_of_games) {
-
+        System.out.println("\n" +"Name: Joachim Isaac\nProgram1: Solitaire Stacks\n");
         for(int i =0; i < number_of_games; i++){
-            System.out.println(results.get(i) + "\n");
+            System.out.println(results.get(i) + "\n" +"\n");
         }
 
     }
