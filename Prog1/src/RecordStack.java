@@ -72,7 +72,7 @@ public class RecordStack {
     public void empty_stack(){
 
         if(!isEmpty()){
-            //Impkement how it empties the stack.
+            //Implement how it empties the stack.
             while(this.stack_amount > 0){
                 this.pop();
             }

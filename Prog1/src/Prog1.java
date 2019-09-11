@@ -11,7 +11,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.StringTokenizer;
-
+//I Implemented my Stacks with linked lists using java.
+//I implemented program without a close gap function
 public class Prog1 {
 
    public static final int DECK_SIZE = 52;
@@ -58,7 +59,7 @@ public class Prog1 {
                 //We declare a new ArrayList over the old card stack so that we can add a new set of cards to it.
                 card_stack = new ArrayList<RecordStack>(DECK_SIZE);
 
-                //We increment all of our postion manipulation values. 
+                //We increment all of our postion manipulation values.
                 position += DECK_SIZE;
                 capacity += DECK_SIZE;
                 set_number += 1;
@@ -130,32 +131,6 @@ public class Prog1 {
     }
 
 
-//    public static int getnumber_of_cards(String cards) {
-//        //Name delimiters something else later.
-//        String delims = "[ ]+";
-//
-////        String array to put the cards into
-//// change tokens name --> better naming needed. But it is an array o strings that contains each card in a
-//        // index thanks to split.(delims);
-//        String[] tokens = cards.split(delims);
-//
-//        System.out.println("Number in string: " + tokens.length);
-//        return tokens.length;
-//    }
-
-//    public static int getnumber_of_cards(String cards) { //tokenizer apparently fixed the issue
-//        int counter  = 0;
-//        StringTokenizer cards_to_count = new StringTokenizer(cards);
-//
-//        for (int i = 0; cards_to_count.hasMoreTokens(); i++) {
-//
-//            cards_to_count.nextToken();
-//            counter++;
-//        }// don't countthe
-//
-//        return counter;
-//    }
-
     public static ArrayList<RecordStack> set_stacks(ArrayList card_stack, int number_of_cards) {
 
         for (int i = 0; i < number_of_cards; i++) {
@@ -166,33 +141,6 @@ public class Prog1 {
         return card_stack;
     }
 
-
-//    public static ArrayList<RecordStack> set_cards(ArrayList<RecordStack> card_stack, String cards) {
-//        String delims = "[ ]+";
-//        String[] tokens = cards.split(delims);
-//
-//        for (int i = 0; i < tokens.length; i++) {
-//            card_stack.get(i).push(tokens[i]);
-//        }
-//        return card_stack;
-//    }
-
-
-
-
-
-//    public static ArrayList<RecordStack> set_cards(ArrayList<RecordStack> card_stack, String cards) {
-//        StringTokenizer cards_to_input = new StringTokenizer(cards);
-//
-// for (int i = 0; cards_to_input.hasMoreTokens(); i++) {
-//            card_stack.get(i).push(cards_to_input.nextToken());
-////        System.out.println(cards_to_input.nextToken());
-//
-//        }
-//
-//
-//        return card_stack;
-//    }
 
     public static ArrayList<RecordStack> set_cards(ArrayList<RecordStack> card_stack, ArrayList<String> tokens,int position_to_start_at,int capacity) {
 
@@ -236,12 +184,12 @@ public class Prog1 {
 
         //go over the logic again but for now it seems like it should work< issue with the array .
         while (card_pointer < card_stacks.size()) {
-            System.out.println("\n"); //Comment everything from here let it run without errors
-            System.out.println("Check one from left "+ check_1_left(card_stacks, card_pointer));
-            System.out.println("Check three from left " + check_3_left(card_stacks, card_pointer));
-            System.out.println("The array which contains the stacks' size:--> " + card_stacks.size());
-            System.out.println("Length of card away from pointer(-1): " + card_stacks.get(card_pointer - 1).peek().length());
-            System.out.println("Length of card away from pointer(-3): " + card_stacks.get(card_pointer - 1).peek().length() + "\n");
+//            System.out.println("\n"); //Comment everything from here let it run without errors
+//            System.out.println("Check one from left "+ check_1_left(card_stacks, card_pointer));
+//            System.out.println("Check three from left " + check_3_left(card_stacks, card_pointer));
+//            System.out.println("The array which contains the stacks' size:--> " + card_stacks.size());
+//            System.out.println("Length of card away from pointer(-1): " + card_stacks.get(card_pointer - 1).peek().length());
+//            System.out.println("Length of card away from pointer(-3): " + card_stacks.get(card_pointer - 1).peek().length() + "\n");
 
             if (card_pointer >= 3 && check_3_left(card_stacks, card_pointer)) {
                 String card_to_move = card_stacks.get(card_pointer).pop();
@@ -318,29 +266,6 @@ public class Prog1 {
         return false;
     }
 
-
-//    public static void print_results(ArrayList<RecordStack> card_stacks, File output_file_name, String cards, int set_number) {
-//        String amount_in_piles = "";
-//        int number_of_piles = card_stacks.size();
-//        int current_amount = 0;
-//
-//        for (int i = 0; i < number_of_piles; i++) {
-//            current_amount = card_stacks.get(i).number_of_cards();
-//            amount_in_piles += " " + Integer.toString(current_amount);
-//        }
-//
-//        try {//Output to txt file
-//            PrintWriter output = new PrintWriter(output_file_name);
-//            output.println("Set " + set_number + ":");
-//            output.println(cards);
-//            System.out.println(cards);
-//            output.println(number_of_piles + " Piles remaining:" + amount_in_piles);
-//            System.out.println(number_of_piles + " Piles remaining:" + amount_in_piles);
-//            output.close();
-//        } catch (IOException ex) {
-//            System.out.println("File not found");
-//        }
-//    }
     public static String store_results(ArrayList<RecordStack> card_stacks, String cards, int set_number,int number_of_games) {
 
         String results= "";
@@ -366,12 +291,4 @@ public class Prog1 {
         }
 
     }
-
-
-
-
-
-
-
-
 }
