@@ -1,9 +1,11 @@
-//------------------------------------------------------------------------------------------------------------ //
+//------------------------------------------------------------------------------------------------------------
 // Name: Joachim Isaac //
 // Course: CS 2143, Fall 19, Dr. Stringfellow //
 // Purpose: To implement a dynamic array stack and use it to replicate a game of solitaire.
+// I Implemented my Stacks with linked lists using java.
+// I implemented program without a close gap function.
 //
-////------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------
 
 
 import java.io.*;
@@ -11,62 +13,85 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.StringTokenizer;
-//I Implemented my Stacks with linked lists using java.
-//I implemented program without a close gap function
+
 public class Prog1 {
 
-   public static final int DECK_SIZE = 52;
+    //Deck size public Constant variable.
+    public static final int DECK_SIZE = 52;
 
-    public static void main(String args[]) throws IOException {
+    //Main Function.
+    public static void main(String args[])throws IOException {
 
-            int set_number = 1;
-
-            //position is used to indicate what position we are when sorting through each deck of cards.
-            //The position in incremented by 52 after a game so that we start at 52 if there is another
-            //deck of cards.
-            int position = 0;
-            //capacity effects how much you iterate over the String of card values. It prevents you from reading in more
-            //Than a deck each iteration. It is incremented by 55 each time so that it will start at the start of
-            //The next deck based on the input string.
-            int capacity = DECK_SIZE;
-
-            String result=""; //Stores all the results.
-
-            System.out.println("Name: Joachim Isaac\nProgram1: Solitaire Stacks\n");
-            String copy_of_cards = read_in_cards(getinputFile()); //Reads in the string of cards and puts it into a variable.
-            File output_file = getoutFile();
-            int games = number_of_games(copy_of_cards);//gets the number of games.
-            ArrayList<String>card_tokens = new ArrayList<String>(games * DECK_SIZE);
-            ArrayList<String>results_list = new ArrayList<String>(games);//Stores a string of all the results.
-            card_tokens = get_card_tokens(card_tokens,copy_of_cards);//Puts each individual card into an array and returns that array.
-
-            ArrayList<RecordStack> card_stack = new ArrayList<RecordStack>(DECK_SIZE);
+        //This variable keeps track of the sets we are printing to the screen.
+        int set_number = 1;
 
 
-            for (int i =0; i < games; i++) {
-                //Sets the stacks and then sets the cards within the separate stacks
-                card_stack = set_cards(set_stacks(card_stack, DECK_SIZE),card_tokens,position,capacity);
+        //Is used to indicate what position we are when sorting through each deck of cards
+        //through each iteration.
+        int position = 0;
 
-                //Game logic to manipulate the stacks and it returns the array of stack that is changed.
-                card_stack = play(card_stack);
 
-                //store_results gets all the results and stores it into a string.
-                result = store_results(card_stack, copy_of_cards, set_number, games);
+        //Increments by 52 each time, to start on the next deck.
+        int capacity = DECK_SIZE;
 
-                //This adds the result per game into an array index.
-                results_list.add(result);
 
-                //We declare a new ArrayList over the old card stack so that we can add a new set of cards to it.
-                card_stack = new ArrayList<RecordStack>(DECK_SIZE);
+        //Stores each set of results through each iteration.
+        String result="";
 
-                //We increment all of our postion manipulation values.
-                position += DECK_SIZE;
-                capacity += DECK_SIZE;
-                set_number += 1;
-            }
+        System.out.println("Name: Joachim Isaac\nProgram1: Solitaire Stacks\n");
 
-            print_all_results(results_list,games);
+        //Reads in the string of cards and puts it into a variable.
+        String copy_of_cards = read_in_cards(getinputFile());
 
+        //Calculates the number of games and returns it into the games variable.
+        int games = number_of_games(copy_of_cards);
+
+        //String array list to store the cards while they are being tokenized.
+        //The size is based on the number of games.
+        ArrayList<String>card_tokens = new ArrayList<String>(games * DECK_SIZE);
+
+        //Array to store the results.
+        //The size is based on the number of games.
+        ArrayList<String>results_list = new ArrayList<String>(games);
+
+        //get_card_tokens Puts each individual card into an array and returns that array.
+        card_tokens = get_card_tokens(card_tokens,copy_of_cards);
+
+        //ArrayList of RecordStack to store the stack ADT and the Cards.
+        ArrayList<RecordStack> card_stack = new ArrayList<RecordStack>(DECK_SIZE);
+
+        //This loops based on home many games we have.
+        for (int i =0; i < games; i++) {
+
+            //Sets the stack ADT and then sets the cards within the separate stacks.
+            card_stack = set_cards(set_stacks(card_stack, DECK_SIZE),card_tokens,position,capacity);
+
+            //Game logic to manipulate the cards within the stacks.
+            //it returns the array of stacks after manipulating it.
+            card_stack = play(card_stack);
+
+            //store_results gets all the results from the stack after it has been manipulated
+            //then stores it into a string.
+            result = store_results(card_stack, copy_of_cards, set_number, games);
+
+            //This adds each result per game into an array.
+            results_list.add(result);
+
+            //We declare a new ArrayList over the old card stack so that we can add a new set of cards to it.
+            card_stack = new ArrayList<RecordStack>(DECK_SIZE);
+
+            //We increment the position manipulation values.
+            //So that we begin inputting card from the next deck.
+            position += DECK_SIZE;
+            capacity += DECK_SIZE;
+
+            set_number += 1;
+
+        }//End of for loop.
+
+
+        //This prints out all the results that we stored in the results_list array.
+        print_all_results(results_list,games);
     }
 
 
@@ -79,19 +104,6 @@ public class Prog1 {
         File input_file = new File(input_file_name.strip());
 
         return input_file;
-    }
-
-    public static File getoutFile() {
-        Scanner input = new Scanner(System.in).useDelimiter("\\s*fish\\s*");
-//      Gets the output file name and stores it in a variable.
-        System.out.println("Enter the output file name:");
-        String output_file_name = input.nextLine();
-
-//        Stores the files names as a File object*******
-//        Strip gets rid of any unwanted white space.
-        File output_file = new File(output_file_name.strip());
-
-        return output_file;
     }
 
 
@@ -110,18 +122,14 @@ public class Prog1 {
                 line = infile.nextLine();
 
                 if (line.charAt(0) != '#') {//
-                    cards += "\n"+ line;
+                    cards += "\n" + line;
                     //add the "+ /n"
-
-                    System.out.println(line);
                 }
-                if (line.charAt(0) == '#') {//
-                   break;
+                else if(line.charAt(0) == '#') {//
+                   return cards;
                 }
+            }//End of while loop.
 
-                line = "";
-                //initialized it to and empty string for the next line
-            }
             return cards;
 
         } catch (FileNotFoundException ex) {//Catch to see if file is not found.
@@ -142,26 +150,19 @@ public class Prog1 {
     }
 
 
-    public static ArrayList<RecordStack> set_cards(ArrayList<RecordStack> card_stack, ArrayList<String> tokens,int position_to_start_at,int capacity) {
-
-
-
+    public static ArrayList<RecordStack> set_cards(ArrayList<RecordStack> card_stack,ArrayList<String> tokens, int position_to_start_at, int capacity) {
         for (int i = position_to_start_at; i < capacity; i++) {
                 card_stack.get(i-position_to_start_at).push(tokens.get(i));
-//        System.out.println(cards_to_input.nextToken());
-
         }
-
-
         return card_stack;
     }
 
     public static ArrayList<String>get_card_tokens(ArrayList<String> token_holder,String cards){
 
         StringTokenizer cards_to_count = new StringTokenizer(cards);
+
         for (int i = 0; cards_to_count.hasMoreTokens(); i++) {
             token_holder.add(cards_to_count.nextToken());
-
         }
         return token_holder;
     }
@@ -181,15 +182,8 @@ public class Prog1 {
         int card_pointer = 1;
         Boolean gap_closed = false;
 
-
         //go over the logic again but for now it seems like it should work< issue with the array .
         while (card_pointer < card_stacks.size()) {
-//            System.out.println("\n"); //Comment everything from here let it run without errors
-//            System.out.println("Check one from left "+ check_1_left(card_stacks, card_pointer));
-//            System.out.println("Check three from left " + check_3_left(card_stacks, card_pointer));
-//            System.out.println("The array which contains the stacks' size:--> " + card_stacks.size());
-//            System.out.println("Length of card away from pointer(-1): " + card_stacks.get(card_pointer - 1).peek().length());
-//            System.out.println("Length of card away from pointer(-3): " + card_stacks.get(card_pointer - 1).peek().length() + "\n");
 
             if (card_pointer >= 3 && check_3_left(card_stacks, card_pointer)) {
                 String card_to_move = card_stacks.get(card_pointer).pop();
@@ -225,14 +219,9 @@ public class Prog1 {
             }
 
             gap_closed = false;
-
-            for(int i =0; i < card_stacks.size(); i++){
-                System.out.println(card_stacks.get(i).peek() +" cardpointer: "+  card_pointer);
-            }
         }
 
         return card_stacks;
-
     }
 
     public static Boolean check_3_left(ArrayList<RecordStack> card_stacks, int card_pointer) {//logic sound
@@ -248,7 +237,6 @@ public class Prog1 {
         }
 
         return false;
-
     }
 
 
@@ -266,7 +254,7 @@ public class Prog1 {
         return false;
     }
 
-    public static String store_results(ArrayList<RecordStack> card_stacks, String cards, int set_number,int number_of_games) {
+    public static String store_results(ArrayList<RecordStack> card_stacks, String cards,int set_number,int number_of_games) {
 
         String results= "";
 
@@ -281,14 +269,16 @@ public class Prog1 {
 
         results = "Set " + set_number + ":" + "\n" + cards + "\n" +"\n"+ number_of_piles + " Piles remaining:" + amount_in_piles;
 
-
        return  results;
     }
+
     public static void print_all_results (ArrayList<String> results,int number_of_games) {
         System.out.println("\n" +"Name: Joachim Isaac\nProgram1: Solitaire Stacks\n");
+
+        if(number_of_games == 0) System.out.println("A deck was not read");
+
         for(int i =0; i < number_of_games; i++){
             System.out.println(results.get(i) + "\n" +"\n");
         }
-
     }
 }
