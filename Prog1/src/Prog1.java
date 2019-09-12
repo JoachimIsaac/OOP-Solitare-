@@ -94,10 +94,9 @@ public class Prog1 {
         print_all_results(results_list,games);
     }
 
-
+    //Prompts user from input file name and then stores it into a file variable.
+    //Then it returns that file variable.
     public static File getinputFile() {
-
-        //Gets the input file name and stores it in a variable.
         Scanner input = new Scanner(System.in).useDelimiter("\\s*fish\\s*");
         System.out.println("Enter the input file name:");
         String input_file_name = input.nextLine();
@@ -106,39 +105,48 @@ public class Prog1 {
         return input_file;
     }
 
-
+    //Takes in a file variable, then reads in the data on that file.
+    //Then it stores it into a variable. If there is a '#' it stops reading in.
     public static String read_in_cards(File input_file_name) { //Issues here
         try {
             //Works with file object -->input_file<--
-            //In this case it will be reading from the input file rather than from the console/terminal.
+            //In this case it will be reading
+            //from the input file rather than from the console/terminal.
             Scanner infile = new Scanner(input_file_name);
 
+            //String to hold all the cards.
             String cards = "";
+
+            //String to hold a line of cards.
             String line = "";
 
-            //Looks for a next line and returns a bool value.
+            //Loops each time while there is a next line to read.
             while (infile.hasNextLine()) {
-                //Read in a line from the file
+
+                //Reads in a line from the file and stores it into line.
                 line = infile.nextLine();
 
+                //If the first character in the line is not a '#' then we add the line to the cards variable.
                 if (line.charAt(0) != '#') {//
                     cards += "\n" + line;
-                    //add the "+ /n"
-                }
-                else if(line.charAt(0) == '#') {//
+
+                }//If the first character in the line is a '#' then we return cards.
+                else if(line.charAt(0) == '#') {
                    return cards;
                 }
             }//End of while loop.
 
             return cards;
 
-        } catch (FileNotFoundException ex) {//Catch to see if file is not found.
+            //Catch exception: if the file name was not found.
+            //It prints "File not found".
+        } catch (FileNotFoundException ex) {
             System.out.println("File not found");
         }
         return "";
     }
 
-
+    //This method takes in an Arraylist of type 'RecordStack' and the adds stacks into each index.
     public static ArrayList<RecordStack> set_stacks(ArrayList card_stack, int number_of_cards) {
 
         for (int i = 0; i < number_of_cards; i++) {
@@ -149,14 +157,18 @@ public class Prog1 {
         return card_stack;
     }
 
-
-    public static ArrayList<RecordStack> set_cards(ArrayList<RecordStack> card_stack,ArrayList<String> tokens, int position_to_start_at, int capacity) {
+    //This method adds cards to the stacks within the RecordStack ArrayList.
+    public static ArrayList<RecordStack> set_cards(ArrayList<RecordStack> card_stack,ArrayList<String> tokens, int position_to_start_at, int capacity){
+        //The values are placed so that we begin inputting cards from the next deck.
+        //When everything increments.
         for (int i = position_to_start_at; i < capacity; i++) {
                 card_stack.get(i-position_to_start_at).push(tokens.get(i));
         }
         return card_stack;
     }
 
+
+    //This method get the cards separated and placed into an array so they can be easily accessed via index.
     public static ArrayList<String>get_card_tokens(ArrayList<String> token_holder,String cards){
 
         StringTokenizer cards_to_count = new StringTokenizer(cards);
@@ -167,6 +179,7 @@ public class Prog1 {
         return token_holder;
     }
 
+    //This method checks how many games we have based on the cards that were read in.
     public static int number_of_games(String cards){
         StringTokenizer cards_to_count = new StringTokenizer(cards);
         int counter = 0;
@@ -178,57 +191,89 @@ public class Prog1 {
         return counter/DECK_SIZE;
     }
 
+    //This is the logic which manipulates the cards inside of the array of stacks.
+    // It matches cards that are the same suit or rank; but it priorities cards that are 3 cards away
+    // form the current card and then it looks for matches that are on card away.
     public static ArrayList<RecordStack> play(ArrayList<RecordStack> card_stacks) {
+
+        //Card pointer is your index position.
         int card_pointer = 1;
+
         Boolean gap_closed = false;
 
-        //go over the logic again but for now it seems like it should work< issue with the array .
+        //This while loop continues as long as the card pointer is less than the size of the stack array.
         while (card_pointer < card_stacks.size()) {
 
+            //This checks whether the card that is 3 positions away matches with the current card.
             if (card_pointer >= 3 && check_3_left(card_stacks, card_pointer)) {
-                String card_to_move = card_stacks.get(card_pointer).pop();
-                card_stacks.get(card_pointer - 3).push(card_to_move);
-                //keeping in mind we keep incrementing to get it to a situation where it will fit that scenario
 
+                //Stores the card we want to move.
+                String card_to_move = card_stacks.get(card_pointer).pop();
+
+                //Then pushes the card we want to move on to the card it matches with.
+                card_stacks.get(card_pointer - 3).push(card_to_move);
+
+                //If the position we remove the card from is empty then we remove that Arraylist Index
+                //This removes the gap and then we set gap_closed = to true.
                 if (card_stacks.get(card_pointer).isEmpty()) {
                     card_stacks.remove(card_pointer);
                     gap_closed = true;
                 }
+
+                //This ensures that we are at the position where we matched the cards, 3 spaces away.
                 card_pointer -= 3;
 
-                //Look for gap
+                //This checks whether the card that is 1 position away matches with the current card.
             }else if (card_pointer >= 1 && check_1_left(card_stacks, card_pointer)) {
 
+                    //Stores the card we want to move.
                     String card_to_move = card_stacks.get(card_pointer).pop();
+
+                    //Then pushes the card we want to move on to the card it matches with.
                     card_stacks.get(card_pointer - 1).push(card_to_move) ;
 
-                if (card_stacks.get(card_pointer).isEmpty()) {//Removes the gap if there is any before continuing
+
+                //If the position we remove the card from is empty then we remove that Arraylist Index
+                //This removes the gap and then we set gap_closed = to true.
+                if (card_stacks.get(card_pointer).isEmpty()) {
                     card_stacks.remove(card_pointer);
                     gap_closed = true;
                 }
-                card_pointer -= 1;///updates card pointer
+
+                //This ensures that we are at the position where we matched the card, 1 space away.
+                card_pointer -= 1;
             }
-            else{
+            else{//If there was no card to match then and no gap was closed then we increment the card pointer by 1.
                 if (card_pointer > 0 && gap_closed == false ){
-               card_pointer += 1;
+                     card_pointer += 1;
                 }
             }
 
+            //This ensures that the card we are currently at is never the first card.
              if (card_pointer == 0) {
                 card_pointer += 1;
             }
 
+             //Reset the gap_close variable to be false.
             gap_closed = false;
-        }
+
+        }//While loop ends here.
 
         return card_stacks;
     }
 
-    public static Boolean check_3_left(ArrayList<RecordStack> card_stacks, int card_pointer) {//logic sound
+    //This checks whether the card that is 3 positions away matches with the current card and returns a Boolean value.
+    public static Boolean check_3_left(ArrayList<RecordStack> card_stacks, int card_pointer) {
+
         if (card_pointer >= 3) {
+
+            //Card to compare that is 3 positions away.
             String card_to_compare = card_stacks.get(card_pointer - 3).peek().trim();
+
+            //Current card to be compared with.
             String card_started_on = card_stacks.get(card_pointer).peek().trim();
 
+            //This checks whether their ranks or suits are equal.
             for (int i = 0; i < 2; i++) {
                 if (card_to_compare.charAt(i) == card_started_on.charAt(i)) {
                     return true;
@@ -239,12 +284,18 @@ public class Prog1 {
         return false;
     }
 
+    //This checks whether the card that is 1 position away matches with the current card and returns a Boolean value.
+    public static Boolean check_1_left(ArrayList<RecordStack> card_stacks, int card_pointer) {
 
-    public static Boolean check_1_left(ArrayList<RecordStack> card_stacks, int card_pointer) {//logic is sound
         if (card_pointer >= 1) {
+
+            //Card to compare that is 1 position away.
             String card_to_compare = card_stacks.get(card_pointer - 1).peek().trim();
+
+            //Current card to be compared with.
             String card_started_on = card_stacks.get(card_pointer).peek().trim();
 
+            //This checks whether their ranks or suits are equal.
             for (int i = 0; i < 2; i++) {
                 if (card_to_compare.charAt(i) == card_started_on.charAt(i)) {
                     return true;
@@ -254,25 +305,39 @@ public class Prog1 {
         return false;
     }
 
+    //Gets all results and stores it into a string and returns that string.
     public static String store_results(ArrayList<RecordStack> card_stacks, String cards,int set_number,int number_of_games) {
 
+        //Variable to hold the results.
         String results= "";
 
+        //Variable to hold the current amount in a pile.
         String amount_in_piles = "";
+
+        //Variables that holds the number of piles we have.
         int number_of_piles = card_stacks.size();
+
+        //Variable to hold the current amount in a pile.
         int current_amount = 0;
 
+        //This iterates through the piles and stores each current amount in the
+        //amount in piles variable as a string.
         for (int i = 0; i < number_of_piles; i++) {
             current_amount = card_stacks.get(i).number_of_cards();
             amount_in_piles += " " + Integer.toString(current_amount);
         }
 
-        results = "Set " + set_number + ":" + "\n" + cards + "\n" +"\n"+ number_of_piles + " Piles remaining:" + amount_in_piles;
+        //Results stores all the results.
+        results = "Set " + set_number + ":" + "\n" + cards + "\n" +"\n"+
+                number_of_piles + " Piles remaining:" + amount_in_piles;
 
        return  results;
     }
 
-    public static void print_all_results (ArrayList<String> results,int number_of_games) {
+
+    //This method loops through all the results that are in the results array and prints them out.
+    //If the number of games is zero it prints for the user that a deck was not read.
+    public static void print_all_results (ArrayList<String> results, int number_of_games) {
         System.out.println("\n" +"Name: Joachim Isaac\nProgram1: Solitaire Stacks\n");
 
         if(number_of_games == 0) System.out.println("A deck was not read");
