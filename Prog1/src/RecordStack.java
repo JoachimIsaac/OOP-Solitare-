@@ -40,7 +40,7 @@ public class RecordStack {
         Node node = new Node(card);
 
         if (node == null) {
-            System.out.println("\n Stack overFlow");
+            System.out.println("\nHeap Overflow");
             return;
         }
         node.next = top;
@@ -83,5 +83,7 @@ public class RecordStack {
     public int number_of_cards() {
         return this.stack_amount;
     }
+
+
 
 }
